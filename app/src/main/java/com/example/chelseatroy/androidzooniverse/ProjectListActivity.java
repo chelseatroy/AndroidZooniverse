@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
@@ -133,14 +132,17 @@ public class ProjectListActivity extends AppCompatActivity implements LoaderMana
 
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            View view = LayoutInflater.from(context).inflate(android.R.layout.simple_list_item_1, parent, false);
-            view.setTag(new ViewHolder(view));
+            LayoutInflater inflater = LayoutInflater.from(context);
+            View view = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+            ViewHolder viewHolder = new ViewHolder(view);
+            view.setTag(viewHolder);
             return view;
         }
 
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
-            ((ViewHolder) view.getTag()).mTitleTextView.setText(cursor.getString(cursor.getColumnIndex(ZooniverseContract.Projects.TITLE)));
+            ViewHolder viewHolder = (ViewHolder) view.getTag();
+            viewHolder.mTitleTextView.setText(cursor.getString(cursor.getColumnIndex(ZooniverseContract.Projects.TITLE)));
         }
     }
 }
