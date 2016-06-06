@@ -5,6 +5,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
@@ -40,6 +41,7 @@ public class ZooniverseContentProvider extends ContentProvider {
                         null,
                         sortOrder
                 );
+                cursor.setNotificationUri(getContext().getContentResolver(), uri);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown uri: " + uri);
@@ -59,10 +61,11 @@ public class ZooniverseContentProvider extends ContentProvider {
         Uri newUri;
         switch (sUriMatcher.match(uri)) {
             case PROJECTS:
-                long id = mZooniverseSQLiteOpenHelper.getWritableDatabase().insert(
+                long id = mZooniverseSQLiteOpenHelper.getWritableDatabase().insertWithOnConflict(
                         "projects",
                         null,
-                        values
+                        values,
+                        SQLiteDatabase.CONFLICT_REPLACE
                 );
                 Uri contentUri = Uri.parse("content://com.example.chelseatroy.androidzooniverse.provider/projects");
                 newUri = ContentUris.withAppendedId(contentUri, id);

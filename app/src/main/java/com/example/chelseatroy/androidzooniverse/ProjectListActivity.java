@@ -1,5 +1,6 @@
 package com.example.chelseatroy.androidzooniverse;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -64,7 +65,14 @@ public class ProjectListActivity extends AppCompatActivity implements LoaderMana
                     @Override
                     public void onResponse(String response) {
                         Projects projects = new Gson().fromJson(response, Projects.class);
+                        for (Project project : projects.projects) {
 
+                            ContentValues values = new ContentValues();
+                            values.put("_id", project.id);
+                            values.put("title", project.title);
+
+                            getContentResolver().insert(Uri.parse("content://com.example.chelseatroy.androidzooniverse.provider/projects"), values);
+                        }
 
                     }
                 },

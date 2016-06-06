@@ -16,9 +16,9 @@
             </intent-filter>
         </activity>
 
-        <!--<provider-->
-            <!--android:authorities="com.example.chelseatroy.androidzooniverse.provider"-->
-            <!--android:name=".ZooniverseContentProvider" />-->
+        <provider
+            android:authorities="com.example.chelseatroy.androidzooniverse.provider"
+            android:name=".ZooniverseContentProvider" />
     </application>
 
 </manifest>

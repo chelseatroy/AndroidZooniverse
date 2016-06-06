@@ -64,6 +64,23 @@ public class ZooniverseContentProviderTest extends ProviderTestCase2<ZooniverseC
     }
 
     @Test
+    public void insert_replacesExistingRecordOnConflict() {
+        ContentValues values = new ContentValues();
+        values.put("_id", 1);
+
+        Uri projectsUri = Uri.parse("content://com.example.chelseatroy.androidzooniverse.provider/projects");
+        getMockContentResolver().insert(
+                projectsUri,
+                values
+        );
+        Uri newUri = getMockContentResolver().insert(
+                projectsUri,
+                values
+        );
+        assertThat(newUri, is(ContentUris.withAppendedId(projectsUri, 1L)));
+    }
+
+    @Test
     public void query() {
         ContentValues values = new ContentValues();
         values.put("_id", 1);
