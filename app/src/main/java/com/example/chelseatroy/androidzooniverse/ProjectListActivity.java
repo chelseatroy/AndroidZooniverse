@@ -40,22 +40,7 @@ public class ProjectListActivity extends AppCompatActivity implements LoaderMana
 
         ListView listView = (ListView) findViewById(android.R.id.list);
 
-        mAdapter = new CursorAdapter(
-                this,
-                null,
-                0
-        ) {
-            @Override
-            public View newView(Context context, Cursor cursor, ViewGroup parent) {
-                return LayoutInflater.from(context).inflate(android.R.layout.simple_list_item_1, parent, false);
-            }
-
-            @Override
-            public void bindView(View view, Context context, Cursor cursor) {
-                TextView titleTextView = (TextView) view.findViewById(android.R.id.text1);
-                titleTextView.setText(cursor.getString(cursor.getColumnIndex(ZooniverseContract.Projects.TITLE)));
-            }
-        };
+        mAdapter = new ProjectListCursorAdapter();
         listView.setAdapter(mAdapter);
 
         getSupportLoaderManager().initLoader(PROJECTS, null, this);
@@ -130,5 +115,32 @@ public class ProjectListActivity extends AppCompatActivity implements LoaderMana
     public static class Project {
         public int id;
         public String title;
+    }
+
+    private class ProjectListCursorAdapter extends CursorAdapter {
+        public ProjectListCursorAdapter() {
+            super(ProjectListActivity.this, null, 0);
+        }
+
+        class ViewHolder {
+            public TextView mTitleTextView;
+
+            public ViewHolder(View view) {
+                mTitleTextView = (TextView) view.findViewById(android.R.id.text1);
+
+            }
+        }
+
+        @Override
+        public View newView(Context context, Cursor cursor, ViewGroup parent) {
+            View view = LayoutInflater.from(context).inflate(android.R.layout.simple_list_item_1, parent, false);
+            view.setTag(new ViewHolder(view));
+            return view;
+        }
+
+        @Override
+        public void bindView(View view, Context context, Cursor cursor) {
+            ((ViewHolder) view.getTag()).mTitleTextView.setText(cursor.getString(cursor.getColumnIndex(ZooniverseContract.Projects.TITLE)));
+        }
     }
 }
