@@ -2,29 +2,22 @@ package com.example.chelseatroy.androidzooniverse;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ArrayAdapter;
-import android.widget.CursorAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +38,7 @@ public class ProjectListActivity extends AppCompatActivity implements LoaderMana
                 this,
                 android.R.layout.simple_list_item_1,
                 null,
-                new String[]{"title"},
+                new String[]{ZooniverseContract.Projects.TITLE},
                 new int[]{android.R.id.text1},
                 0
         );
@@ -68,10 +61,10 @@ public class ProjectListActivity extends AppCompatActivity implements LoaderMana
                         for (Project project : projects.projects) {
 
                             ContentValues values = new ContentValues();
-                            values.put("_id", project.id);
-                            values.put("title", project.title);
+                            values.put(ZooniverseContract.Projects._ID, project.id);
+                            values.put(ZooniverseContract.Projects.TITLE, project.title);
 
-                            getContentResolver().insert(Uri.parse("content://com.example.chelseatroy.androidzooniverse.provider/projects"), values);
+                            getContentResolver().insert(ZooniverseContract.Projects.CONTENT_URI, values);
                         }
 
                     }
@@ -98,7 +91,7 @@ public class ProjectListActivity extends AppCompatActivity implements LoaderMana
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(
                 this,
-                Uri.parse("content://com.example.chelseatroy.androidzooniverse.provider/projects"),
+                ZooniverseContract.Projects.CONTENT_URI,
                 null,
                 null,
                 null,

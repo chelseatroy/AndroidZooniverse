@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
+import static com.example.chelseatroy.androidzooniverse.ZooniverseContract.*;
+
 public class ZooniverseContentProvider extends ContentProvider {
 
     private static UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -17,7 +19,7 @@ public class ZooniverseContentProvider extends ContentProvider {
     public static final int PROJECTS = 0;
 
     static {
-        sUriMatcher.addURI("com.example.chelseatroy.androidzooniverse.provider", "projects", PROJECTS);
+        sUriMatcher.addURI(AUTHORITY, Projects.TABLE, PROJECTS);
     }
 
     @Override
@@ -33,7 +35,7 @@ public class ZooniverseContentProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
             case PROJECTS:
                 cursor = mZooniverseSQLiteOpenHelper.getReadableDatabase().query(
-                        "projects",
+                        Projects.TABLE,
                         projection,
                         selection,
                         selectionArgs,
@@ -62,13 +64,12 @@ public class ZooniverseContentProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
             case PROJECTS:
                 long id = mZooniverseSQLiteOpenHelper.getWritableDatabase().insertWithOnConflict(
-                        "projects",
+                        Projects.TABLE,
                         null,
                         values,
                         SQLiteDatabase.CONFLICT_REPLACE
                 );
-                Uri contentUri = Uri.parse("content://com.example.chelseatroy.androidzooniverse.provider/projects");
-                newUri = ContentUris.withAppendedId(contentUri, id);
+                newUri = ContentUris.withAppendedId(Projects.CONTENT_URI, id);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown uri: " + uri);
