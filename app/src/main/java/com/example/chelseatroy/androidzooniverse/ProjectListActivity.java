@@ -1,15 +1,21 @@
 package com.example.chelseatroy.androidzooniverse;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.RequestQueue;
@@ -25,7 +31,7 @@ import java.util.Map;
 public class ProjectListActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final int PROJECTS = 0;
-    private SimpleCursorAdapter mAdapter;
+    private CursorAdapter mAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,14 +40,22 @@ public class ProjectListActivity extends AppCompatActivity implements LoaderMana
 
         ListView listView = (ListView) findViewById(android.R.id.list);
 
-        mAdapter = new SimpleCursorAdapter(
+        mAdapter = new CursorAdapter(
                 this,
-                android.R.layout.simple_list_item_1,
                 null,
-                new String[]{ZooniverseContract.Projects.TITLE},
-                new int[]{android.R.id.text1},
                 0
-        );
+        ) {
+            @Override
+            public View newView(Context context, Cursor cursor, ViewGroup parent) {
+                return LayoutInflater.from(context).inflate(android.R.layout.simple_list_item_1, parent, false);
+            }
+
+            @Override
+            public void bindView(View view, Context context, Cursor cursor) {
+                TextView titleTextView = (TextView) view.findViewById(android.R.id.text1);
+                titleTextView.setText(cursor.getString(cursor.getColumnIndex(ZooniverseContract.Projects.TITLE)));
+            }
+        };
         listView.setAdapter(mAdapter);
 
         getSupportLoaderManager().initLoader(PROJECTS, null, this);
