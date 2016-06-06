@@ -1,11 +1,18 @@
 package com.example.chelseatroy.androidzooniverse;
 
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ArrayAdapter;
+import android.widget.CursorAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -21,11 +28,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ProjectListActivity extends AppCompatActivity {
+public class ProjectListActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    public static final int PROJECTS = 0;
+    private SimpleCursorAdapter mAdapter;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_list);
+
+        ListView listView = (ListView) findViewById(android.R.id.list);
+
+        mAdapter = new SimpleCursorAdapter(
+                this,
+                android.R.layout.simple_list_item_1,
+                null,
+                new String[]{"title"},
+                new int[]{android.R.id.text1},
+                0
+        );
+        listView.setAdapter(mAdapter);
+
+        getSupportLoaderManager().initLoader(PROJECTS, null, this);
     }
 
     @Override
@@ -40,18 +65,7 @@ public class ProjectListActivity extends AppCompatActivity {
                     public void onResponse(String response) {
                         Projects projects = new Gson().fromJson(response, Projects.class);
 
-                        ListView listView = (ListView) findViewById(android.R.id.list);
-                        List<String> strings = new ArrayList<>();
-                        for (Project project : projects.projects) {
-                            strings.add(project.title);
-                        }
 
-                        ListAdapter adapter = new ArrayAdapter<>(
-                                ProjectListActivity.this,
-                                android.R.layout.simple_list_item_1,
-                                strings);
-
-                        listView.setAdapter(adapter);
                     }
                 },
                 new Response.ErrorListener() {
@@ -70,6 +84,28 @@ public class ProjectListActivity extends AppCompatActivity {
             }
         };
         requestQueue.add(request);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(
+                this,
+                Uri.parse("content://com.example.chelseatroy.androidzooniverse.provider/projects"),
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mAdapter.changeCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mAdapter.changeCursor(null);
     }
 
     public static class Projects {
