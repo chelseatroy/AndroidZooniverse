@@ -70,6 +70,7 @@ public class ZooniverseContentProvider extends ContentProvider {
                         SQLiteDatabase.CONFLICT_REPLACE
                 );
                 newUri = ContentUris.withAppendedId(Projects.CONTENT_URI, id);
+                getContext().getContentResolver().notifyChange(newUri, null);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown uri: " + uri);

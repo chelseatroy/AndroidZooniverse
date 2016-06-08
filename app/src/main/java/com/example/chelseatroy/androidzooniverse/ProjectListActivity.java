@@ -3,6 +3,7 @@ package com.example.chelseatroy.androidzooniverse;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
@@ -37,9 +38,9 @@ public class ProjectListActivity extends AppCompatActivity implements LoaderMana
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_list);
 
-        ListView listView = (ListView) findViewById(android.R.id.list);
+        mAdapter = new ProjectListCursorAdapter(this);
 
-        mAdapter = new ProjectListCursorAdapter();
+        ListView listView = (ListView) findViewById(android.R.id.list);
         listView.setAdapter(mAdapter);
 
         getSupportLoaderManager().initLoader(PROJECTS, null, this);
@@ -61,6 +62,7 @@ public class ProjectListActivity extends AppCompatActivity implements LoaderMana
                             ContentValues values = new ContentValues();
                             values.put(ZooniverseContract.Projects._ID, project.id);
                             values.put(ZooniverseContract.Projects.TITLE, project.title);
+                            values.put(ZooniverseContract.Projects.DESCRIPTION, project.description);
 
                             getContentResolver().insert(ZooniverseContract.Projects.CONTENT_URI, values);
                         }
@@ -114,26 +116,28 @@ public class ProjectListActivity extends AppCompatActivity implements LoaderMana
     public static class Project {
         public int id;
         public String title;
+        public String description;
     }
 
-    private class ProjectListCursorAdapter extends CursorAdapter {
-        public ProjectListCursorAdapter() {
-            super(ProjectListActivity.this, null, 0);
+    public static class ProjectListCursorAdapter extends CursorAdapter {
+        public ProjectListCursorAdapter(Context context) {
+            super(context, null, 0);
         }
 
-        class ViewHolder {
+        public class ViewHolder {
+            public TextView mDescriptionTextView;
             public TextView mTitleTextView;
 
             public ViewHolder(View view) {
-                mTitleTextView = (TextView) view.findViewById(android.R.id.text1);
-
+                mTitleTextView = (TextView) view.findViewById(R.id.title_text);
+                mDescriptionTextView = (TextView) view.findViewById(R.id.description_text);
             }
         }
 
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             LayoutInflater inflater = LayoutInflater.from(context);
-            View view = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+            View view = inflater.inflate(R.layout.project_list_item, parent, false);
             ViewHolder viewHolder = new ViewHolder(view);
             view.setTag(viewHolder);
             return view;
@@ -143,6 +147,7 @@ public class ProjectListActivity extends AppCompatActivity implements LoaderMana
         public void bindView(View view, Context context, Cursor cursor) {
             ViewHolder viewHolder = (ViewHolder) view.getTag();
             viewHolder.mTitleTextView.setText(cursor.getString(cursor.getColumnIndex(ZooniverseContract.Projects.TITLE)));
+            viewHolder.mDescriptionTextView.setText(cursor.getString(cursor.getColumnIndex(ZooniverseContract.Projects.DESCRIPTION)));
         }
     }
 }

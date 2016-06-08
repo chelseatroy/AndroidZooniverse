@@ -11,5 +11,6 @@ public class ZooniverseContract {
         public static final Uri CONTENT_URI = Uri.withAppendedPath(ZooniverseContract.CONTENT_URI, "projects");
         public static final String TABLE = "projects";
         public static final String TITLE = "title";
+        public static final String DESCRIPTION = "description";
     }
 }

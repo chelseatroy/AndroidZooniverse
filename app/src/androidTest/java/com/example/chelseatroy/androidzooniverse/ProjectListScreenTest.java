@@ -44,6 +44,8 @@ public class ProjectListScreenTest {
     public void showsProjects() {
         onData(withRowString(1, "Snapshot Supernova"))
                 .check(matches(isDisplayed()));
+        onData(withRowString(2, "Help in the hunt for supernovae, live!"))
+                .check(matches(isDisplayed()));
     }
 
     private static class VolleyIdlingResource implements IdlingResource {
