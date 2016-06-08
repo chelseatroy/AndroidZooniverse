@@ -109,6 +109,39 @@ public class ZooniverseContentProviderTest extends ProviderTestCase2<ZooniverseC
     }
 
     @Test
+    public void query_forSingleProject() {
+        ContentValues values1 = new ContentValues();
+        values1.put("_id", 1);
+        values1.put("title", "Project Supernova");
+        ContentValues values2 = new ContentValues();
+        values2.put("_id", 2);
+        values2.put("title", "Ice Hunters");
+
+        Uri projectsUri = Uri.parse("content://com.example.chelseatroy.androidzooniverse.provider/projects");
+        getMockContentResolver().insert(
+                projectsUri,
+                values1
+        );
+        getMockContentResolver().insert(
+                projectsUri,
+                values2
+        );
+
+        Cursor result = getMockContentResolver().query(
+                ContentUris.withAppendedId(projectsUri, 2),
+                null, null,
+                null,
+                null
+        );
+
+        assertThat(result.getCount(), is(1));
+        result.moveToFirst();
+        assertThat(result.getInt(0), is(2));
+        assertThat(result.getString(1), is("Ice Hunters"));
+    }
+
+
+    @Test
     public void query_throwsException_givenUnknownUri() {
         Uri unknownUri = Uri.parse("content://com.example.chelseatroy.androidzooniverse.provider/unknown-uri");
 

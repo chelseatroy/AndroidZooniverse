@@ -20,9 +20,13 @@ import java.lang.reflect.Field;
 import java.util.Set;
 
 import static android.support.test.espresso.Espresso.onData;
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.CursorMatchers.*;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isA;
@@ -41,11 +45,16 @@ public class ProjectListScreenTest {
     }
 
     @Test
-    public void showsProjects() {
-        onData(withRowString(1, "Snapshot Supernova"))
+    public void showsProjects() throws InterruptedException {
+        onData(withRowString("title", "Snapshot Supernova"))
                 .check(matches(isDisplayed()));
-        onData(withRowString(2, "Help in the hunt for supernovae, live!"))
+        onData(withRowString("description", "Help in the hunt for supernovae, live!"))
                 .check(matches(isDisplayed()));
+
+        onData(withRowString("title", "Snapshot Supernova"))
+                .perform(click());
+        onView(withId(R.id.title_text))
+                .check(matches(withText("Snapshot Supernova")));
     }
 
     private static class VolleyIdlingResource implements IdlingResource {

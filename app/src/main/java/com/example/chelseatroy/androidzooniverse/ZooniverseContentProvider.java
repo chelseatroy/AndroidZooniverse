@@ -17,9 +17,11 @@ public class ZooniverseContentProvider extends ContentProvider {
     private ZooniverseSQLiteOpenHelper mZooniverseSQLiteOpenHelper;
 
     public static final int PROJECTS = 0;
+    private static final int PROJECT_ID = 1;
 
     static {
         sUriMatcher.addURI(AUTHORITY, Projects.TABLE, PROJECTS);
+        sUriMatcher.addURI(AUTHORITY, Projects.TABLE + "/#", PROJECT_ID);
     }
 
     @Override
@@ -43,11 +45,22 @@ public class ZooniverseContentProvider extends ContentProvider {
                         null,
                         sortOrder
                 );
-                cursor.setNotificationUri(getContext().getContentResolver(), uri);
+                break;
+            case PROJECT_ID:
+                cursor = mZooniverseSQLiteOpenHelper.getReadableDatabase().query(
+                        Projects.TABLE,
+                        projection,
+                        "_id=?",
+                        new String[]{uri.getLastPathSegment()},
+                        null,
+                        null,
+                        sortOrder
+                );
                 break;
             default:
                 throw new IllegalArgumentException("Unknown uri: " + uri);
         }
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
     }
 

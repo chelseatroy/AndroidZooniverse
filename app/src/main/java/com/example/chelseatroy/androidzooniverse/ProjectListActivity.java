@@ -1,9 +1,12 @@
 package com.example.chelseatroy.androidzooniverse;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
@@ -14,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -42,6 +46,15 @@ public class ProjectListActivity extends AppCompatActivity implements LoaderMana
 
         ListView listView = (ListView) findViewById(android.R.id.list);
         listView.setAdapter(mAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Uri uri = Uri.parse("content://com.example.chelseatroy.androidzooniverse.provider/projects");
+                Intent intent = new Intent(Intent.ACTION_VIEW, ContentUris.withAppendedId(uri, id));
+                intent.setClass(ProjectListActivity.this, ProjectDetailActivity.class);
+                startActivity(intent);
+            }
+        });
 
         getSupportLoaderManager().initLoader(PROJECTS, null, this);
     }
