@@ -9,9 +9,11 @@ import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.util.Pair;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -45,6 +47,7 @@ public class ProjectListActivity extends AppCompatActivity implements LoaderMana
         mAdapter = new ProjectListCursorAdapter(this);
 
         ListView listView = (ListView) findViewById(android.R.id.list);
+
         listView.setAdapter(mAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -52,7 +55,12 @@ public class ProjectListActivity extends AppCompatActivity implements LoaderMana
                 Uri uri = Uri.parse("content://com.example.chelseatroy.androidzooniverse.provider/projects");
                 Intent intent = new Intent(Intent.ACTION_VIEW, ContentUris.withAppendedId(uri, id));
                 intent.setClass(ProjectListActivity.this, ProjectDetailActivity.class);
-                startActivity(intent);
+
+                Pair<View, String> p1 = Pair.create(view.findViewById(R.id.title_text), "titleToDetail");
+                Pair<View, String> p2 = Pair.create(view.findViewById(R.id.description_text), "descriptionToDetail");
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(ProjectListActivity.this, p1, p2);
+
+                startActivity(intent, options.toBundle());
             }
         });
 
