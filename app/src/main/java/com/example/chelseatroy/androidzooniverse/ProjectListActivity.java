@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -46,7 +47,7 @@ public class ProjectListActivity extends AppCompatActivity implements LoaderMana
 
         mAdapter = new ProjectListCursorAdapter(this);
 
-        ListView listView = (ListView) findViewById(android.R.id.list);
+        GridView listView = (GridView) findViewById(android.R.id.list);
 
         listView.setAdapter(mAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
