@@ -29,6 +29,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.etsy.android.grid.StaggeredGridView;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
@@ -47,7 +48,7 @@ public class ProjectListActivity extends AppCompatActivity implements LoaderMana
 
         mAdapter = new ProjectListCursorAdapter(this);
 
-        GridView listView = (GridView) findViewById(android.R.id.list);
+        StaggeredGridView listView = (StaggeredGridView) findViewById(android.R.id.list);
 
         listView.setAdapter(mAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
