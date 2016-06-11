@@ -6,16 +6,15 @@
 
     <TextView
         android:id="@+id/title_text"
-        android:textSize="20dp"
-        android:layout_gravity="center_horizontal"
-        android:transitionName="titleToDetail"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:transitionName="titleToDetail"/>
+
     <TextView
         android:id="@+id/description_text"
-        android:transitionName="descriptionToDetail"
         android:layout_width="match_parent"
-        android:text="jnfkefnovwjenfkcdwnsfcdjksnfdnfjkedjfnd"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:transitionName="descriptionToDetail"/>
 
 </LinearLayout>

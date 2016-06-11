@@ -1,10 +1,7 @@
 package com.example.chelseatroy.androidzooniverse;
 
-import android.content.ContentValues;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -17,7 +14,6 @@ public class ProjectDetailActivity extends AppCompatActivity implements LoaderMa
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_project_detail);
 
         getSupportLoaderManager().initLoader(0, null, this);
@@ -31,8 +27,12 @@ public class ProjectDetailActivity extends AppCompatActivity implements LoaderMa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         data.moveToFirst();
+
         TextView titleTextView = (TextView) findViewById(R.id.title_text);
         titleTextView.setText(data.getString(data.getColumnIndex(ZooniverseContract.Projects.TITLE)));
+
+        TextView textView = (TextView) findViewById(R.id.description_text);
+        textView.setText(data.getString(data.getColumnIndex(ZooniverseContract.Projects.DESCRIPTION)));
     }
 
     @Override
