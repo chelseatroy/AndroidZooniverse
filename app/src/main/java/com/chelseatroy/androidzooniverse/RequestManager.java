@@ -1,4 +1,4 @@
-package com.example.chelseatroy.androidzooniverse;
+package com.chelseatroy.androidzooniverse;
 
 import android.content.Context;
 

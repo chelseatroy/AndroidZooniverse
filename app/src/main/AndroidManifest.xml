@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.chelseatroy.androidzooniverse">
+    package="com.chelseatroy.androidzooniverse">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -18,7 +18,7 @@
         <activity android:name=".ProjectDetailActivity"/>
 
         <provider
-            android:authorities="com.example.chelseatroy.androidzooniverse.provider"
+            android:authorities=".provider"
             android:name=".provider.ZooniverseContentProvider" />
     </application>
 

@@ -1,4 +1,4 @@
-package com.example.chelseatroy.androidzooniverse;
+package com.chelseatroy.androidzooniverse;
 
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -26,8 +26,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.chelseatroy.androidzooniverse.provider.ZooniverseContract;
 import com.etsy.android.grid.StaggeredGridView;
-import com.example.chelseatroy.androidzooniverse.provider.ZooniverseContract;
 import com.google.gson.Gson;
 
 import java.util.HashMap;

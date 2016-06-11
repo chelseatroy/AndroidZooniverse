@@ -1,4 +1,4 @@
-package com.example.chelseatroy.androidzooniverse;
+package com.chelseatroy.androidzooniverse;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -8,7 +8,7 @@ import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.example.chelseatroy.androidzooniverse.helper.VolleyIdlingResource;
+import com.chelseatroy.androidzooniverse.helper.VolleyIdlingResource;
 
 import org.junit.Before;
 import org.junit.Rule;

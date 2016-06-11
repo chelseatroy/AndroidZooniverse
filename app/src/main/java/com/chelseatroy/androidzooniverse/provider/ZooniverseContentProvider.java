@@ -1,4 +1,4 @@
-package com.example.chelseatroy.androidzooniverse.provider;
+package com.chelseatroy.androidzooniverse.provider;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;

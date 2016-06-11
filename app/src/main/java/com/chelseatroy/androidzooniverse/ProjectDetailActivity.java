@@ -1,4 +1,4 @@
-package com.example.chelseatroy.androidzooniverse;
+package com.chelseatroy.androidzooniverse;
 
 import android.database.Cursor;
 import android.net.Uri;
@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.chelseatroy.androidzooniverse.provider.ZooniverseContract;
+import com.chelseatroy.androidzooniverse.provider.ZooniverseContract;
 
 public class ProjectDetailActivity extends AppCompatActivity {
     @Override

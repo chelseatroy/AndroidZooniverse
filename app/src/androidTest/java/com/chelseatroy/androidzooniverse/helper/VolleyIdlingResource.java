@@ -1,10 +1,10 @@
-package com.example.chelseatroy.androidzooniverse.helper;
+package com.chelseatroy.androidzooniverse.helper;
 
 import android.content.Context;
 import android.support.test.espresso.IdlingResource;
 
 import com.android.volley.RequestQueue;
-import com.example.chelseatroy.androidzooniverse.RequestManager;
+import com.chelseatroy.androidzooniverse.RequestManager;
 
 import java.lang.reflect.Field;
 import java.util.Set;
