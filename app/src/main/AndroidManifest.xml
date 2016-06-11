@@ -15,7 +15,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".ProjectListFragment$GetProjectsService"/>
+        <service android:name=".GetProjectsService"/>
 
         <activity android:name=".ProjectDetailActivity"/>
 
