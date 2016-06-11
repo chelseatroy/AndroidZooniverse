@@ -1,4 +1,4 @@
-package com.example.chelseatroy.androidzooniverse;
+package com.example.chelseatroy.androidzooniverse.provider;
 
 import android.net.Uri;
 import android.provider.BaseColumns;

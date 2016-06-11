@@ -1,9 +1,7 @@
-package com.example.chelseatroy.androidzooniverse;
+package com.example.chelseatroy.androidzooniverse.provider;
 
-import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.test.InstrumentationRegistry;
@@ -11,13 +9,13 @@ import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.ProviderTestCase2;
 
+import com.example.chelseatroy.androidzooniverse.provider.ZooniverseContentProvider;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;

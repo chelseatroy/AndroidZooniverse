@@ -27,6 +27,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.etsy.android.grid.StaggeredGridView;
+import com.example.chelseatroy.androidzooniverse.provider.ZooniverseContract;
 import com.google.gson.Gson;
 
 import java.util.HashMap;

@@ -19,7 +19,7 @@
 
         <provider
             android:authorities="com.example.chelseatroy.androidzooniverse.provider"
-            android:name=".ZooniverseContentProvider" />
+            android:name=".provider.ZooniverseContentProvider" />
     </application>
 
 </manifest>

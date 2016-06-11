@@ -1,4 +1,4 @@
-package com.example.chelseatroy.androidzooniverse;
+package com.example.chelseatroy.androidzooniverse.provider;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
