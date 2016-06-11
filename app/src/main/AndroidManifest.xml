@@ -15,10 +15,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name=".ProjectListActivity$GetProjectsService"/>
+
         <activity android:name=".ProjectDetailActivity"/>
 
         <provider
-            android:authorities=".provider"
+            android:authorities="com.chelseatroy.androidzooniverse.provider"
             android:name=".provider.ZooniverseContentProvider" />
     </application>
 

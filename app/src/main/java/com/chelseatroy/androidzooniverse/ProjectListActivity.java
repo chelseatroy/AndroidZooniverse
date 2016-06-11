@@ -1,10 +1,12 @@
 package com.chelseatroy.androidzooniverse;
 
+import android.app.IntentService;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -15,6 +17,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.util.Pair;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,8 +26,7 @@ import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
+import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
 import com.chelseatroy.androidzooniverse.provider.ZooniverseContract;
 import com.etsy.android.grid.StaggeredGridView;
@@ -33,11 +35,11 @@ import com.google.gson.Gson;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
-import static android.support.v4.app.ActivityOptionsCompat.*;
+import static android.support.v4.app.ActivityOptionsCompat.makeSceneTransitionAnimation;
 
 public class ProjectListActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,43 +98,13 @@ public class ProjectListActivity extends AppCompatActivity {
             getLoaderManager()
                     .initLoader(PROJECTS_LOADER, null, this);
 
-            RequestQueue requestQueue = RequestManager.getInstance(getActivity()).getRequestQueue();
-            StringRequest request = new StringRequest(
-                    "https://panoptes.zooniverse.org/api/projects",
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            Projects projects = new Gson().fromJson(response, Projects.class);
-                            for (Project project : projects.projects) {
-
-                                ContentValues values = new ContentValues();
-                                values.put(ZooniverseContract.Projects._ID, project.id);
-                                values.put(ZooniverseContract.Projects.TITLE, project.title);
-                                values.put(ZooniverseContract.Projects.DESCRIPTION, project.description);
-
-                                getActivity()
-                                        .getContentResolver()
-                                        .insert(ZooniverseContract.Projects.CONTENT_URI, values);
-                            }
-
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            System.out.println("error = " + error);
-                        }
-                    }
-            ) {
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> params = new HashMap<>();
-                    params.put("Accept", "application/vnd.api+json; version=1");
-
-                    return params;
-                }
-            };
-            requestQueue.add(request);
+            Intent service = new Intent(
+                    Intent.ACTION_VIEW,
+                    ZooniverseContract.Projects.CONTENT_URI,
+                    getActivity(),
+                    GetProjectsService.class
+            );
+            getActivity().startService(service);
         }
 
         @Override
@@ -190,13 +162,66 @@ public class ProjectListActivity extends AppCompatActivity {
         }
     }
 
-    public static class Projects {
-        public List<Project> projects;
-    }
+    public static class GetProjectsService extends IntentService {
+        private static final String TAG = "GetProjectsService";
 
-    public static class Project {
-        public int id;
-        public String title;
-        public String description;
+        public GetProjectsService() {
+            super("GetProjectsService");
+        }
+
+        @Override
+        protected void onHandleIntent(Intent intent) {
+            RequestQueue requestQueue = RequestManager.getInstance(this).getRequestQueue();
+            RequestFuture<String> future = RequestFuture.newFuture();
+            StringRequest request = new GetProjectsRequest(future);
+            requestQueue.add(request);
+            try {
+                String s = future.get();
+
+                GetProjects getProjects = new Gson().fromJson(s, GetProjects.class);
+                for (Project project : getProjects.projects) {
+                    ContentValues values = new ContentValues();
+                    values.put(ZooniverseContract.Projects._ID, project.id);
+                    values.put(ZooniverseContract.Projects.TITLE, project.title);
+                    values.put(ZooniverseContract.Projects.DESCRIPTION, project.description);
+
+                    Uri newUri = getContentResolver().insert(ZooniverseContract.Projects.CONTENT_URI, values);
+                    Log.d(TAG, "onHandleIntent: inserted = " + newUri);
+                }
+            } catch (InterruptedException e) {
+                Log.e(TAG, "onHandleIntent: ", e);
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                Log.e(TAG, "onHandleIntent: ", e);
+            }
+
+            Log.d(TAG, "onHandleIntent() called with: intent = [" + intent + "]");
+        }
+
+        public static class GetProjectsRequest extends StringRequest {
+            private static final String PROJECTS_URL = "https://panoptes.zooniverse.org/api/projects";
+            private static final String API_V1_ACCEPT_HEADER = "application/vnd.api+json; version=1";
+
+            public GetProjectsRequest(RequestFuture<String> future) {
+                super(PROJECTS_URL, future, future);
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("Accept", API_V1_ACCEPT_HEADER);
+                return params;
+            }
+        }
+
+        public static class GetProjects {
+            public List<Project> projects;
+        }
+
+        public static class Project {
+            public int id;
+            public String title;
+            public String description;
+        }
     }
 }

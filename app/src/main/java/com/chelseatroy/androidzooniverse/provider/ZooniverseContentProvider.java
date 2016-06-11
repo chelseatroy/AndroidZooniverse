@@ -10,11 +10,11 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 
 public class ZooniverseContentProvider extends ContentProvider {
-
     private static UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+
     private ZooniverseSQLiteOpenHelper mZooniverseSQLiteOpenHelper;
 
-    public static final int PROJECTS = 0;
+    private static final int PROJECTS = 0;
     private static final int PROJECT_ID = 1;
 
     static {

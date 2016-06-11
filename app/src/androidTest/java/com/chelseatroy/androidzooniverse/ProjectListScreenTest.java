@@ -8,7 +8,7 @@ import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.chelseatroy.androidzooniverse.helper.VolleyIdlingResource;
+import com.chelseatroy.androidzooniverse.helper.IntentServiceIdlingResource;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -35,7 +35,7 @@ public class ProjectListScreenTest {
     @Before
     public void setUp() {
         Context targetContext = InstrumentationRegistry.getTargetContext();
-        IdlingResource idlingResources = new VolleyIdlingResource(targetContext);
+        IdlingResource idlingResources = new IntentServiceIdlingResource(targetContext);
         Espresso.registerIdlingResources(idlingResources);
     }
 
