@@ -4,7 +4,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.support.test.espresso.IdlingResource;
 
-import com.chelseatroy.androidzooniverse.ProjectListActivity;
+import com.chelseatroy.androidzooniverse.ProjectListFragment;
 
 public class IntentServiceIdlingResource implements IdlingResource {
     private Context mContext;
@@ -36,7 +36,7 @@ public class IntentServiceIdlingResource implements IdlingResource {
     private boolean isIntentServiceRunning() {
         ActivityManager manager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo info : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (ProjectListActivity.ProjectListFragment.GetProjectsService.class.getName().equals(info.service.getClassName())) {
+            if (ProjectListFragment.GetProjectsService.class.getName().equals(info.service.getClassName())) {
                 return true;
             }
         }
