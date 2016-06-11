@@ -1,42 +1,92 @@
 package com.example.chelseatroy.androidzooniverse;
 
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class ProjectDetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ProjectDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_detail);
 
-        getSupportLoaderManager().initLoader(0, null, this);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.container, ProjectDetailFragment.newInstance(getIntent().getData()))
+                .commit();
     }
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(this, getIntent().getData(), null, null, null, null);
-    }
+    public static class ProjectDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+        private static final String ARG_DATA = "data";
+        private static final int PROJECT_LOADER = 0;
 
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        data.moveToFirst();
+        private Uri mData;
 
-        TextView titleTextView = (TextView) findViewById(R.id.title_text);
-        titleTextView.setText(data.getString(data.getColumnIndex(ZooniverseContract.Projects.TITLE)));
+        public static Fragment newInstance(Uri data) {
+            Bundle args = new Bundle();
+            args.putParcelable(ARG_DATA, data);
+            Fragment fragment = new ProjectDetailFragment();
+            fragment.setArguments(args);
+            return fragment;
+        }
 
-        TextView textView = (TextView) findViewById(R.id.description_text);
-        textView.setText(data.getString(data.getColumnIndex(ZooniverseContract.Projects.DESCRIPTION)));
-    }
+        @Override
+        public void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            mData = getArguments().getParcelable(ARG_DATA);
+        }
 
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
+        @Nullable
+        @Override
+        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            return inflater.inflate(R.layout.fragment_project_detail, container, false);
+        }
 
+        @Override
+        public void onResume() {
+            super.onResume();
+
+            getLoaderManager()
+                    .initLoader(PROJECT_LOADER, null, this);
+        }
+
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            return new CursorLoader(
+                    getActivity(),
+                    mData,
+                    null,
+                    null,
+                    null,
+                    null
+            );
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            data.moveToFirst();
+
+            View view = getView();
+            TextView titleTextView = (TextView) view.findViewById(R.id.title_text);
+            titleTextView.setText(data.getString(data.getColumnIndex(ZooniverseContract.Projects.TITLE)));
+
+            TextView textView = (TextView) view.findViewById(R.id.description_text);
+            textView.setText(data.getString(data.getColumnIndex(ZooniverseContract.Projects.DESCRIPTION)));
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+            // noop
+        }
     }
 }

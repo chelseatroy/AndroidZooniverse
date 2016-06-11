@@ -49,7 +49,7 @@ public class ProjectListActivity extends AppCompatActivity {
     }
 
     public static class ProjectListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
-        public static final int PROJECTS = 0;
+        private static final int PROJECTS_LOADER = 0;
 
         private CursorAdapter mCursorAdapter;
 
@@ -93,7 +93,7 @@ public class ProjectListActivity extends AppCompatActivity {
             super.onResume();
 
             getLoaderManager()
-                    .initLoader(PROJECTS, null, this);
+                    .initLoader(PROJECTS_LOADER, null, this);
 
             RequestQueue requestQueue = RequestManager.getInstance(getActivity()).getRequestQueue();
             StringRequest request = new StringRequest(
