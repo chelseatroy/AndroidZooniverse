@@ -5,11 +5,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -20,8 +19,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.GridView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
@@ -36,125 +33,133 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ProjectListActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+import static android.support.v4.app.ActivityOptionsCompat.*;
 
-    public static final int PROJECTS = 0;
-    private CursorAdapter mAdapter;
+public class ProjectListActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_list);
 
-        mAdapter = new ProjectListCursorAdapter(this);
-
-        StaggeredGridView listView = (StaggeredGridView) findViewById(android.R.id.list);
-
-        listView.setAdapter(mAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Uri uri = Uri.parse("content://com.example.chelseatroy.androidzooniverse.provider/projects");
-                Intent intent = new Intent(Intent.ACTION_VIEW, ContentUris.withAppendedId(uri, id));
-                intent.setClass(ProjectListActivity.this, ProjectDetailActivity.class);
-
-                Pair<View, String> p1 = Pair.create(view.findViewById(R.id.title_text), "titleToDetail");
-                Pair<View, String> p2 = Pair.create(view.findViewById(R.id.description_text), "descriptionToDetail");
-                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(ProjectListActivity.this, p1, p2);
-
-                startActivity(intent, options.toBundle());
-            }
-        });
-
-        getSupportLoaderManager().initLoader(PROJECTS, null, this);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.container, new ProjectListFragment())
+                .commit();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    public static class ProjectListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+        public static final int PROJECTS = 0;
 
-        RequestQueue requestQueue = RequestManager.getInstance(this).getRequestQueue();
-        StringRequest request = new StringRequest(
-                "https://panoptes.zooniverse.org/api/projects",
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Projects projects = new Gson().fromJson(response, Projects.class);
-                        for (Project project : projects.projects) {
+        private CursorAdapter mCursorAdapter;
 
-                            ContentValues values = new ContentValues();
-                            values.put(ZooniverseContract.Projects._ID, project.id);
-                            values.put(ZooniverseContract.Projects.TITLE, project.title);
-                            values.put(ZooniverseContract.Projects.DESCRIPTION, project.description);
+        @Override
+        public void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+        }
 
-                            getContentResolver().insert(ZooniverseContract.Projects.CONTENT_URI, values);
-                        }
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            View view = inflater.inflate(R.layout.fragment_project_list, container, false);
 
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        System.out.println("error = " + error);
-                    }
+            mCursorAdapter = new ProjectListCursorAdapter(getActivity());
+
+            StaggeredGridView staggeredGridView = (StaggeredGridView) view.findViewById(R.id.grid);
+            staggeredGridView.setAdapter(mCursorAdapter);
+            staggeredGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    // animation
+                    Pair<View, String> p1 = Pair.create(view.findViewById(R.id.title_text), "titleToDetail");
+                    Pair<View, String> p2 = Pair.create(view.findViewById(R.id.description_text), "descriptionToDetail");
+                    ActivityOptionsCompat optionsCompat = makeSceneTransitionAnimation(getActivity(), p1, p2);
+
+                    // go to detail
+                    Intent intent = new Intent(
+                            Intent.ACTION_VIEW,
+                            ContentUris.withAppendedId(ZooniverseContract.Projects.CONTENT_URI, id),
+                            getActivity(),
+                            ProjectDetailActivity.class
+                    );
+                    getActivity().startActivity(intent, optionsCompat.toBundle());
                 }
-        ) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("Accept", "application/vnd.api+json; version=1");
+            });
 
-                return params;
-            }
-        };
-        requestQueue.add(request);
-    }
+            return view;
+        }
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(
-                this,
-                ZooniverseContract.Projects.CONTENT_URI,
-                null,
-                null,
-                null,
-                null
-        );
-    }
+        @Override
+        public void onResume() {
+            super.onResume();
 
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mAdapter.changeCursor(data);
-    }
+            getLoaderManager()
+                    .initLoader(PROJECTS, null, this);
 
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        mAdapter.changeCursor(null);
-    }
+            RequestQueue requestQueue = RequestManager.getInstance(getActivity()).getRequestQueue();
+            StringRequest request = new StringRequest(
+                    "https://panoptes.zooniverse.org/api/projects",
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Projects projects = new Gson().fromJson(response, Projects.class);
+                            for (Project project : projects.projects) {
 
-    public static class Projects {
-        public List<Project> projects;
-    }
+                                ContentValues values = new ContentValues();
+                                values.put(ZooniverseContract.Projects._ID, project.id);
+                                values.put(ZooniverseContract.Projects.TITLE, project.title);
+                                values.put(ZooniverseContract.Projects.DESCRIPTION, project.description);
 
-    public static class Project {
-        public int id;
-        public String title;
-        public String description;
+                                getActivity()
+                                        .getContentResolver()
+                                        .insert(ZooniverseContract.Projects.CONTENT_URI, values);
+                            }
+
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            System.out.println("error = " + error);
+                        }
+                    }
+            ) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("Accept", "application/vnd.api+json; version=1");
+
+                    return params;
+                }
+            };
+            requestQueue.add(request);
+        }
+
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            return new CursorLoader(
+                    getActivity(),
+                    ZooniverseContract.Projects.CONTENT_URI,
+                    null,
+                    null,
+                    null,
+                    null
+            );
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            mCursorAdapter.changeCursor(data);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+            mCursorAdapter.changeCursor(null);
+        }
     }
 
     public static class ProjectListCursorAdapter extends CursorAdapter {
         public ProjectListCursorAdapter(Context context) {
             super(context, null, 0);
-        }
-
-        public class ViewHolder {
-            public TextView mDescriptionTextView;
-            public TextView mTitleTextView;
-
-            public ViewHolder(View view) {
-                mTitleTextView = (TextView) view.findViewById(R.id.title_text);
-                mDescriptionTextView = (TextView) view.findViewById(R.id.description_text);
-            }
         }
 
         @Override
@@ -172,5 +177,25 @@ public class ProjectListActivity extends AppCompatActivity implements LoaderMana
             viewHolder.mTitleTextView.setText(cursor.getString(cursor.getColumnIndex(ZooniverseContract.Projects.TITLE)));
             viewHolder.mDescriptionTextView.setText(cursor.getString(cursor.getColumnIndex(ZooniverseContract.Projects.DESCRIPTION)));
         }
+
+        public static class ViewHolder {
+            public TextView mTitleTextView;
+            public TextView mDescriptionTextView;
+
+            public ViewHolder(View view) {
+                mTitleTextView = (TextView) view.findViewById(R.id.title_text);
+                mDescriptionTextView = (TextView) view.findViewById(R.id.description_text);
+            }
+        }
+    }
+
+    public static class Projects {
+        public List<Project> projects;
+    }
+
+    public static class Project {
+        public int id;
+        public String title;
+        public String description;
     }
 }
