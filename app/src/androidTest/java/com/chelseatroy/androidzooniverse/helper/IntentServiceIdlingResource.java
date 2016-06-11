@@ -4,7 +4,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.support.test.espresso.IdlingResource;
 
-import com.chelseatroy.androidzooniverse.GetProjectsService;
+import com.chelseatroy.androidzooniverse.project.GetProjectsService;
 
 public class IntentServiceIdlingResource implements IdlingResource {
     private Context mContext;

@@ -1,4 +1,4 @@
-package com.chelseatroy.androidzooniverse;
+package com.chelseatroy.androidzooniverse.project;
 
 import android.os.Bundle;
 import android.support.v4.os.ResultReceiver;

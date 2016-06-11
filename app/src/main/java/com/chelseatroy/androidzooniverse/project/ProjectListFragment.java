@@ -1,4 +1,4 @@
-package com.chelseatroy.androidzooniverse;
+package com.chelseatroy.androidzooniverse.project;
 
 import android.content.ContentUris;
 import android.content.Context;
@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 
+import com.chelseatroy.androidzooniverse.R;
 import com.chelseatroy.androidzooniverse.provider.ZooniverseContract;
 import com.etsy.android.grid.StaggeredGridView;
 

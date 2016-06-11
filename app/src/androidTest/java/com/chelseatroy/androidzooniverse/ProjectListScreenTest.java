@@ -9,6 +9,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.chelseatroy.androidzooniverse.helper.IntentServiceIdlingResource;
+import com.chelseatroy.androidzooniverse.project.ProjectListActivity;
 
 import org.junit.Before;
 import org.junit.Rule;

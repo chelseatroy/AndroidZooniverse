@@ -1,4 +1,4 @@
-package com.chelseatroy.androidzooniverse;
+package com.chelseatroy.androidzooniverse.project;
 
 import android.app.IntentService;
 import android.content.ContentValues;
@@ -11,6 +11,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.ServerError;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
+import com.chelseatroy.androidzooniverse.RequestManager;
 import com.chelseatroy.androidzooniverse.provider.ZooniverseContract;
 import com.google.gson.Gson;
 

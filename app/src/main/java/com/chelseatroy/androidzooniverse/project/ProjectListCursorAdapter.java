@@ -1,4 +1,4 @@
-package com.chelseatroy.androidzooniverse;
+package com.chelseatroy.androidzooniverse.project;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.chelseatroy.androidzooniverse.R;
 import com.chelseatroy.androidzooniverse.provider.ZooniverseContract;
 
 public class ProjectListCursorAdapter extends CursorAdapter {

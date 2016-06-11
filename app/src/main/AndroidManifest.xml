@@ -9,15 +9,15 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ProjectListActivity">
+        <activity android:name=".project.ProjectListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".GetProjectsService"/>
+        <service android:name=".project.GetProjectsService"/>
 
-        <activity android:name=".ProjectDetailActivity"/>
+        <activity android:name=".project.ProjectDetailActivity"/>
 
         <provider
             android:authorities="com.chelseatroy.androidzooniverse.provider"
