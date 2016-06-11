@@ -36,7 +36,7 @@ public class IntentServiceIdlingResource implements IdlingResource {
     private boolean isIntentServiceRunning() {
         ActivityManager manager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo info : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (ProjectListActivity.GetProjectsService.class.getName().equals(info.service.getClassName())) {
+            if (ProjectListActivity.ProjectListFragment.GetProjectsService.class.getName().equals(info.service.getClassName())) {
                 return true;
             }
         }

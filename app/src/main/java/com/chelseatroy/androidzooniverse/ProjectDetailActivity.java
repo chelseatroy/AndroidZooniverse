@@ -28,7 +28,7 @@ public class ProjectDetailActivity extends AppCompatActivity {
                 .commit();
     }
 
-    public static class ProjectDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    public static class ProjectDetailFragment extends Fragment {
         private static final String ARG_DATA = "data";
         private static final int PROJECT_LOADER = 0;
 
@@ -58,37 +58,38 @@ public class ProjectDetailActivity extends AppCompatActivity {
         public void onResume() {
             super.onResume();
 
-            getLoaderManager()
-                    .initLoader(PROJECT_LOADER, null, this);
+            getLoaderManager().initLoader(PROJECT_LOADER, null, new ProjectDetailLoaderCallbacks());
         }
 
-        @Override
-        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            return new CursorLoader(
-                    getActivity(),
-                    mData,
-                    null,
-                    null,
-                    null,
-                    null
-            );
-        }
+        public class ProjectDetailLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
+            @Override
+            public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+                return new CursorLoader(
+                        getActivity(),
+                        mData,
+                        null,
+                        null,
+                        null,
+                        null
+                );
+            }
 
-        @Override
-        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-            data.moveToFirst();
+            @Override
+            public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+                data.moveToFirst();
 
-            View view = getView();
-            TextView titleTextView = (TextView) view.findViewById(R.id.title_text);
-            titleTextView.setText(data.getString(data.getColumnIndex(ZooniverseContract.Projects.TITLE)));
+                View view = getView();
+                TextView titleTextView = (TextView) view.findViewById(R.id.title_text);
+                titleTextView.setText(data.getString(data.getColumnIndex(ZooniverseContract.Projects.TITLE)));
 
-            TextView textView = (TextView) view.findViewById(R.id.description_text);
-            textView.setText(data.getString(data.getColumnIndex(ZooniverseContract.Projects.DESCRIPTION)));
-        }
+                TextView textView = (TextView) view.findViewById(R.id.description_text);
+                textView.setText(data.getString(data.getColumnIndex(ZooniverseContract.Projects.DESCRIPTION)));
+            }
 
-        @Override
-        public void onLoaderReset(Loader<Cursor> loader) {
-            // noop
+            @Override
+            public void onLoaderReset(Loader<Cursor> loader) {
+                // noop
+            }
         }
     }
 }
