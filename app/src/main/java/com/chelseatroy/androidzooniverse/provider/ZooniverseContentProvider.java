@@ -1,4 +1,4 @@
-package com.example.chelseatroy.androidzooniverse;
+package com.chelseatroy.androidzooniverse.provider;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -9,19 +9,17 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
-import static com.example.chelseatroy.androidzooniverse.ZooniverseContract.*;
-
 public class ZooniverseContentProvider extends ContentProvider {
-
     private static UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+
     private ZooniverseSQLiteOpenHelper mZooniverseSQLiteOpenHelper;
 
-    public static final int PROJECTS = 0;
+    private static final int PROJECTS = 0;
     private static final int PROJECT_ID = 1;
 
     static {
-        sUriMatcher.addURI(AUTHORITY, Projects.TABLE, PROJECTS);
-        sUriMatcher.addURI(AUTHORITY, Projects.TABLE + "/#", PROJECT_ID);
+        sUriMatcher.addURI(ZooniverseContract.AUTHORITY, ZooniverseContract.Projects.TABLE, PROJECTS);
+        sUriMatcher.addURI(ZooniverseContract.AUTHORITY, ZooniverseContract.Projects.TABLE + "/#", PROJECT_ID);
     }
 
     @Override
@@ -37,7 +35,7 @@ public class ZooniverseContentProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
             case PROJECTS:
                 cursor = mZooniverseSQLiteOpenHelper.getReadableDatabase().query(
-                        Projects.TABLE,
+                        ZooniverseContract.Projects.TABLE,
                         projection,
                         selection,
                         selectionArgs,
@@ -48,7 +46,7 @@ public class ZooniverseContentProvider extends ContentProvider {
                 break;
             case PROJECT_ID:
                 cursor = mZooniverseSQLiteOpenHelper.getReadableDatabase().query(
-                        Projects.TABLE,
+                        ZooniverseContract.Projects.TABLE,
                         projection,
                         "_id=?",
                         new String[]{uri.getLastPathSegment()},
@@ -77,12 +75,12 @@ public class ZooniverseContentProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
             case PROJECTS:
                 long id = mZooniverseSQLiteOpenHelper.getWritableDatabase().insertWithOnConflict(
-                        Projects.TABLE,
+                        ZooniverseContract.Projects.TABLE,
                         null,
                         values,
                         SQLiteDatabase.CONFLICT_REPLACE
                 );
-                newUri = ContentUris.withAppendedId(Projects.CONTENT_URI, id);
+                newUri = ContentUris.withAppendedId(ZooniverseContract.Projects.CONTENT_URI, id);
                 getContext().getContentResolver().notifyChange(newUri, null);
                 break;
             default:

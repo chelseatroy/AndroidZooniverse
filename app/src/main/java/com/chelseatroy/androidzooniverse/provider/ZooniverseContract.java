@@ -1,10 +1,10 @@
-package com.example.chelseatroy.androidzooniverse;
+package com.chelseatroy.androidzooniverse.provider;
 
 import android.net.Uri;
 import android.provider.BaseColumns;
 
 public class ZooniverseContract {
-    public static final String AUTHORITY = "com.example.chelseatroy.androidzooniverse.provider";
+    public static final String AUTHORITY = "com.chelseatroy.androidzooniverse.provider";
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY);
 
     public static class Projects implements BaseColumns{

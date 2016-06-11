@@ -1,9 +1,7 @@
-package com.example.chelseatroy.androidzooniverse;
+package com.chelseatroy.androidzooniverse.provider;
 
-import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.test.InstrumentationRegistry;
@@ -17,8 +15,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -30,7 +26,7 @@ public class ZooniverseContentProviderTest extends ProviderTestCase2<ZooniverseC
     public ExpectedException mExpectedException = ExpectedException.none();
 
     public ZooniverseContentProviderTest() {
-        super(ZooniverseContentProvider.class, "com.example.chelseatroy.androidzooniverse.provider");
+        super(ZooniverseContentProvider.class, "com.chelseatroy.androidzooniverse.provider");
     }
 
     @Override
@@ -46,7 +42,7 @@ public class ZooniverseContentProviderTest extends ProviderTestCase2<ZooniverseC
         values.put("_id", 1);
         values.put("title", "Project Supernova");
 
-        Uri projectsUri = Uri.parse("content://com.example.chelseatroy.androidzooniverse.provider/projects");
+        Uri projectsUri = Uri.parse("content://com.chelseatroy.androidzooniverse.provider/projects");
         Uri newUri = getMockContentResolver().insert(
                 projectsUri,
                 values
@@ -57,10 +53,10 @@ public class ZooniverseContentProviderTest extends ProviderTestCase2<ZooniverseC
     @Test
     public void insert_throwsException_givenUnknownUri() {
         ContentValues values = new ContentValues();
-        Uri unknownUri = Uri.parse("content://com.example.chelseatroy.androidzooniverse.provider/unknown-uri");
+        Uri unknownUri = Uri.parse("content://com.chelseatroy.androidzooniverse.provider/unknown-uri");
 
         mExpectedException.expect(IllegalArgumentException.class);
-        mExpectedException.expectMessage("Unknown uri: content://com.example.chelseatroy.androidzooniverse.provider/unknown-uri");
+        mExpectedException.expectMessage("Unknown uri: content://com.chelseatroy.androidzooniverse.provider/unknown-uri");
 
         getMockContentResolver()
                 .insert(unknownUri, values);
@@ -71,7 +67,7 @@ public class ZooniverseContentProviderTest extends ProviderTestCase2<ZooniverseC
         ContentValues values = new ContentValues();
         values.put("_id", 1);
 
-        Uri projectsUri = Uri.parse("content://com.example.chelseatroy.androidzooniverse.provider/projects");
+        Uri projectsUri = Uri.parse("content://com.chelseatroy.androidzooniverse.provider/projects");
         getMockContentResolver().insert(
                 projectsUri,
                 values
@@ -89,7 +85,7 @@ public class ZooniverseContentProviderTest extends ProviderTestCase2<ZooniverseC
         values.put("_id", 1);
         values.put("title", "Project Supernova");
 
-        Uri projectsUri = Uri.parse("content://com.example.chelseatroy.androidzooniverse.provider/projects");
+        Uri projectsUri = Uri.parse("content://com.chelseatroy.androidzooniverse.provider/projects");
         Uri newUri = getMockContentResolver().insert(
                 projectsUri,
                 values
@@ -117,7 +113,7 @@ public class ZooniverseContentProviderTest extends ProviderTestCase2<ZooniverseC
         values2.put("_id", 2);
         values2.put("title", "Ice Hunters");
 
-        Uri projectsUri = Uri.parse("content://com.example.chelseatroy.androidzooniverse.provider/projects");
+        Uri projectsUri = Uri.parse("content://com.chelseatroy.androidzooniverse.provider/projects");
         getMockContentResolver().insert(
                 projectsUri,
                 values1
@@ -143,10 +139,10 @@ public class ZooniverseContentProviderTest extends ProviderTestCase2<ZooniverseC
 
     @Test
     public void query_throwsException_givenUnknownUri() {
-        Uri unknownUri = Uri.parse("content://com.example.chelseatroy.androidzooniverse.provider/unknown-uri");
+        Uri unknownUri = Uri.parse("content://com.chelseatroy.androidzooniverse.provider/unknown-uri");
 
         mExpectedException.expect(IllegalArgumentException.class);
-        mExpectedException.expectMessage("Unknown uri: content://com.example.chelseatroy.androidzooniverse.provider/unknown-uri");
+        mExpectedException.expectMessage("Unknown uri: content://com.chelseatroy.androidzooniverse.provider/unknown-uri");
 
         getMockContentResolver()
                 .query(unknownUri, null, null, null, null);

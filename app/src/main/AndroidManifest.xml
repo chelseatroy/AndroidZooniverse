@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.chelseatroy.androidzooniverse">
+    package="com.chelseatroy.androidzooniverse">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -9,17 +9,19 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ProjectListActivity">
+        <activity android:name=".project.ProjectListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ProjectDetailActivity"/>
+        <service android:name=".project.GetProjectsService"/>
+
+        <activity android:name=".project.ProjectDetailActivity"/>
 
         <provider
-            android:authorities="com.example.chelseatroy.androidzooniverse.provider"
-            android:name=".ZooniverseContentProvider" />
+            android:authorities="com.chelseatroy.androidzooniverse.provider"
+            android:name=".provider.ZooniverseContentProvider" />
     </application>
 
 </manifest>
