@@ -30,9 +30,9 @@ public class ProjectListActivity extends AppCompatActivity implements ProjectLis
     }
 
     @Override
-    public void onProjectSelected(Uri projectUri) {
-        Pair<View, String> p1 = Pair.create(findViewById(R.id.title_text), "titleToDetail");
-        Pair<View, String> p2 = Pair.create(findViewById(R.id.description_text), "descriptionToDetail");
+    public void onProjectSelected(Uri projectUri, View view) {
+        Pair<View, String> p1 = Pair.create(view.findViewById(R.id.title_text), "titleToDetail");
+        Pair<View, String> p2 = Pair.create(view.findViewById(R.id.description_text), "descriptionToDetail");
         ActivityOptionsCompat optionsCompat = makeSceneTransitionAnimation(this, p1, p2);
 
         Intent intent = new Intent(

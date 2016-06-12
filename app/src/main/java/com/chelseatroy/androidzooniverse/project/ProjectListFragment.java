@@ -57,7 +57,7 @@ public class ProjectListFragment extends Fragment implements GetProjectsResultRe
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Uri projectUri = ContentUris.withAppendedId(ZooniverseContract.Projects.CONTENT_URI, id);
-                mOnProjectSelectedListener.onProjectSelected(projectUri);
+                mOnProjectSelectedListener.onProjectSelected(projectUri, view);
             }
         });
 
@@ -108,7 +108,7 @@ public class ProjectListFragment extends Fragment implements GetProjectsResultRe
     }
 
     public interface OnProjectSelectedListener {
-        void onProjectSelected(Uri projectUri);
+        void onProjectSelected(Uri projectUri, View view);
     }
 
     public class ProjectListLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
