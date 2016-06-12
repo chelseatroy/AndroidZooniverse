@@ -1,7 +1,9 @@
 package com.chelseatroy.androidzooniverse.project;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -11,6 +13,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.chelseatroy.androidzooniverse.R;
+
+import java.lang.annotation.Target;
 
 import static android.support.v4.app.ActivityOptionsCompat.makeSceneTransitionAnimation;
 
@@ -30,17 +34,21 @@ public class ProjectListActivity extends AppCompatActivity implements ProjectLis
     }
 
     @Override
+    @TargetApi(15)
     public void onProjectSelected(Uri projectUri, View view) {
-        Pair<View, String> p1 = Pair.create(view.findViewById(R.id.title_text), "titleToDetail");
-        Pair<View, String> p2 = Pair.create(view.findViewById(R.id.description_text), "descriptionToDetail");
-        ActivityOptionsCompat optionsCompat = makeSceneTransitionAnimation(this, p1, p2);
-
         Intent intent = new Intent(
                 Intent.ACTION_VIEW,
                 projectUri,
                 this,
                 ProjectDetailActivity.class
         );
-        startActivity(intent, optionsCompat.toBundle());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Pair<View, String> p1 = Pair.create(view.findViewById(R.id.title_text), "titleToDetail");
+            Pair<View, String> p2 = Pair.create(view.findViewById(R.id.description_text), "descriptionToDetail");
+            ActivityOptionsCompat optionsCompat = makeSceneTransitionAnimation(this, p1, p2);
+            startActivity(intent, optionsCompat.toBundle());
+        } else {
+            startActivity(intent);
+        }
     }
 }
