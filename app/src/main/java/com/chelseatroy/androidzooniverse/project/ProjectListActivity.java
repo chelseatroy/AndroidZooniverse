@@ -14,8 +14,6 @@ import android.view.View;
 
 import com.chelseatroy.androidzooniverse.R;
 
-import java.lang.annotation.Target;
-
 import static android.support.v4.app.ActivityOptionsCompat.makeSceneTransitionAnimation;
 
 public class ProjectListActivity extends AppCompatActivity implements ProjectListFragment.OnProjectSelectedListener {
@@ -29,7 +27,7 @@ public class ProjectListActivity extends AppCompatActivity implements ProjectLis
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.container, new ProjectListFragment())
+                .replace(R.id.container, new ProjectListFragment())
                 .commit();
     }
 

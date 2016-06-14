@@ -18,7 +18,7 @@ public class ProjectDetailActivity extends AppCompatActivity {
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.container, ProjectDetailFragment.newInstance(getIntent().getData()))
+                .replace(R.id.container, ProjectDetailFragment.newInstance(getIntent().getData()))
                 .commit();
     }
 }
