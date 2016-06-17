@@ -45,8 +45,6 @@ public class ProjectListScreenTest {
         // list
         onData(allOf(withRowString("title", "Snapshot Supernova"),
                 withRowString("description", "Help in the hunt for supernovae, live!")))
-                .check(matches(isDisplayed()));
-        onData(withRowString("title", "Snapshot Supernova"))
                 .perform(click());
 
         // detail

@@ -11,6 +11,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.ServerError;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
+import com.chelseatroy.androidzooniverse.BuildConfig;
 import com.chelseatroy.androidzooniverse.RequestManager;
 import com.chelseatroy.androidzooniverse.provider.ZooniverseContract;
 import com.google.gson.Gson;
@@ -54,6 +55,7 @@ public class GetProjectsService extends IntentService {
             }
             Bundle resultData = new Bundle();
             resultData.putInt(EXTRA_COUNT, getProjects.projects.size());
+
             receiver.send(RESULT_CODE_OK, resultData);
         } catch (InterruptedException e) {
             Bundle resultData = new Bundle();
@@ -61,9 +63,8 @@ public class GetProjectsService extends IntentService {
 
             receiver.send(RESULT_CODE_INTERRUPTED_ERROR, resultData);
         } catch (ExecutionException e) {
-            ServerError serverError = (ServerError) e.getCause();
-
             Bundle resultData = new Bundle();
+            ServerError serverError = (ServerError) e.getCause();
             resultData.putInt(EXTRA_STATUS_CODE, serverError.networkResponse.statusCode);
 
             receiver.send(RESULT_CODE_SERVER_ERROR, resultData);
@@ -71,17 +72,14 @@ public class GetProjectsService extends IntentService {
     }
 
     public static class GetProjectsRequest extends StringRequest {
-        private static final String PROJECTS_URL = "https://panoptes.zooniverse.org/api/projects";
-        private static final String API_V1_ACCEPT_HEADER = "application/vnd.api+json; version=1";
-
         public GetProjectsRequest(RequestFuture<String> future) {
-            super(PROJECTS_URL, future, future);
+            super(BuildConfig.PROJECTS_URL, future, future);
         }
 
         @Override
         public Map<String, String> getHeaders() throws AuthFailureError {
             Map<String, String> params = new HashMap<>();
-            params.put("Accept", API_V1_ACCEPT_HEADER);
+            params.put("Accept", "application/vnd.api+json; version=1");
             return params;
         }
     }

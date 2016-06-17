@@ -6,25 +6,26 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
 public class ZooniverseContentProvider extends ContentProvider {
-    private static UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-
-    private ZooniverseSQLiteOpenHelper mZooniverseSQLiteOpenHelper;
-
     private static final int PROJECTS = 0;
     private static final int PROJECT_ID = 1;
+    private static UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
         sUriMatcher.addURI(ZooniverseContract.AUTHORITY, ZooniverseContract.Projects.TABLE, PROJECTS);
         sUriMatcher.addURI(ZooniverseContract.AUTHORITY, ZooniverseContract.Projects.TABLE + "/#", PROJECT_ID);
     }
 
+    private SQLiteOpenHelper mSQLiteOpenHelper;
+
     @Override
     public boolean onCreate() {
-        mZooniverseSQLiteOpenHelper = new ZooniverseSQLiteOpenHelper(getContext());
+        mSQLiteOpenHelper = new ZooniverseSQLiteOpenHelper(getContext());
         return true;
     }
 
@@ -34,26 +35,28 @@ public class ZooniverseContentProvider extends ContentProvider {
         Cursor cursor;
         switch (sUriMatcher.match(uri)) {
             case PROJECTS:
-                cursor = mZooniverseSQLiteOpenHelper.getReadableDatabase().query(
-                        ZooniverseContract.Projects.TABLE,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder
-                );
+                cursor = mSQLiteOpenHelper
+                        .getReadableDatabase()
+                        .query(ZooniverseContract.Projects.TABLE,
+                                projection,
+                                selection,
+                                selectionArgs,
+                                null,
+                                null,
+                                sortOrder);
                 break;
             case PROJECT_ID:
-                cursor = mZooniverseSQLiteOpenHelper.getReadableDatabase().query(
-                        ZooniverseContract.Projects.TABLE,
-                        projection,
-                        "_id=?",
-                        new String[]{uri.getLastPathSegment()},
-                        null,
-                        null,
-                        sortOrder
-                );
+                SQLiteQueryBuilder sqLiteQueryBuilder = new SQLiteQueryBuilder();
+                sqLiteQueryBuilder.setTables(ZooniverseContract.Projects.TABLE);
+                sqLiteQueryBuilder.appendWhere("_id = " + uri.getLastPathSegment());
+                cursor = sqLiteQueryBuilder
+                        .query(mSQLiteOpenHelper.getReadableDatabase(),
+                                projection,
+                                selection,
+                                selectionArgs,
+                                null,
+                                null,
+                                sortOrder);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown uri: " + uri);
@@ -74,12 +77,12 @@ public class ZooniverseContentProvider extends ContentProvider {
         Uri newUri;
         switch (sUriMatcher.match(uri)) {
             case PROJECTS:
-                long id = mZooniverseSQLiteOpenHelper.getWritableDatabase().insertWithOnConflict(
-                        ZooniverseContract.Projects.TABLE,
-                        null,
-                        values,
-                        SQLiteDatabase.CONFLICT_REPLACE
-                );
+                long id = mSQLiteOpenHelper
+                        .getWritableDatabase()
+                        .insertWithOnConflict(ZooniverseContract.Projects.TABLE,
+                                null,
+                                values,
+                                SQLiteDatabase.CONFLICT_REPLACE);
                 newUri = ContentUris.withAppendedId(ZooniverseContract.Projects.CONTENT_URI, id);
                 getContext().getContentResolver().notifyChange(newUri, null);
                 break;

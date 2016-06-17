@@ -1,5 +1,6 @@
 package com.chelseatroy.androidzooniverse.project;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -16,9 +17,10 @@ public class ProjectDetailActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Uri projectUri = getIntent().getData();
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.container, ProjectDetailFragment.newInstance(getIntent().getData()))
+                .replace(R.id.container, ProjectDetailFragment.newInstance(projectUri))
                 .commit();
     }
 }
