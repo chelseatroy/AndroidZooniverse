@@ -10,6 +10,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.chelseatroy.androidzooniverse.helper.IntentServiceIdlingResource;
 import com.chelseatroy.androidzooniverse.project.ProjectListActivity;
+import com.chelseatroy.androidzooniverse.provider.ZooniverseContract;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -38,6 +39,10 @@ public class ProjectListScreenTest {
         Context targetContext = InstrumentationRegistry.getTargetContext();
         IdlingResource idlingResources = new IntentServiceIdlingResource(targetContext);
         Espresso.registerIdlingResources(idlingResources);
+
+        targetContext
+                .getContentResolver()
+                .delete(ZooniverseContract.Projects.CONTENT_URI, null, null);
     }
 
     @Test
