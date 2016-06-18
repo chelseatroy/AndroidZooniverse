@@ -16,15 +16,16 @@ import android.widget.TextView;
 import com.chelseatroy.androidzooniverse.R;
 import com.chelseatroy.androidzooniverse.provider.ZooniverseContract;
 
-public class ProjectDetailFragment extends Fragment {
-    private static final String ARG_DATA = "data";
+public class ProjectDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    private static final String ARG_PROJECT_URI = "projectUri";
     private static final int PROJECT_LOADER = 0;
 
-    private Uri mData;
+    private Uri mProjectUri;
 
-    public static Fragment newInstance(Uri data) {
+    public static Fragment newInstance(Uri projectUri) {
         Bundle args = new Bundle();
-        args.putParcelable(ARG_DATA, data);
+        args.putParcelable(ARG_PROJECT_URI, projectUri);
+
         Fragment fragment = new ProjectDetailFragment();
         fragment.setArguments(args);
         return fragment;
@@ -33,7 +34,7 @@ public class ProjectDetailFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mData = getArguments().getParcelable(ARG_DATA);
+        mProjectUri = getArguments().getParcelable(ARG_PROJECT_URI);
     }
 
     @Nullable
@@ -46,37 +47,36 @@ public class ProjectDetailFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        getLoaderManager().initLoader(PROJECT_LOADER, null, new ProjectDetailLoaderCallbacks());
+        getLoaderManager()
+                .initLoader(PROJECT_LOADER, null, this);
     }
 
-    public class ProjectDetailLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
-        @Override
-        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            return new CursorLoader(
-                    getActivity(),
-                    mData,
-                    null,
-                    null,
-                    null,
-                    null
-            );
-        }
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(
+                getActivity(),
+                mProjectUri,
+                null,
+                null,
+                null,
+                null
+        );
+    }
 
-        @Override
-        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-            data.moveToFirst();
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        data.moveToFirst();
 
-            View view = getView();
-            TextView titleTextView = (TextView) view.findViewById(R.id.title_text);
-            titleTextView.setText(data.getString(data.getColumnIndex(ZooniverseContract.Projects.TITLE)));
+        View view = getView();
+        TextView titleTextView = (TextView) view.findViewById(R.id.title_text);
+        titleTextView.setText(data.getString(data.getColumnIndex(ZooniverseContract.Projects.TITLE)));
 
-            TextView textView = (TextView) view.findViewById(R.id.description_text);
-            textView.setText(data.getString(data.getColumnIndex(ZooniverseContract.Projects.DESCRIPTION)));
-        }
+        TextView textView = (TextView) view.findViewById(R.id.description_text);
+        textView.setText(data.getString(data.getColumnIndex(ZooniverseContract.Projects.DESCRIPTION)));
+    }
 
-        @Override
-        public void onLoaderReset(Loader<Cursor> loader) {
-            // noop
-        }
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        // noop
     }
 }

@@ -24,10 +24,9 @@ import com.etsy.android.grid.StaggeredGridView;
 
 import java.util.Locale;
 
-public class ProjectListFragment extends Fragment implements GetProjectsResultReceiver.Receiver {
-    private static final int PROJECTS_LOADER = 0;
+public class ProjectListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, GetProjectsResultReceiver.Receiver {
     public static final String EXTRA_RECEIVER = "receiver";
-
+    private static final int PROJECTS_LOADER = 0;
     private GetProjectsResultReceiver mGetProjectsResultReceiver;
     private OnProjectSelectedListener mOnProjectSelectedListener;
     private CursorAdapter mCursorAdapter;
@@ -35,21 +34,18 @@ public class ProjectListFragment extends Fragment implements GetProjectsResultRe
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mOnProjectSelectedListener = ((OnProjectSelectedListener) context);
+        mOnProjectSelectedListener = (OnProjectSelectedListener) context;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mGetProjectsResultReceiver = new GetProjectsResultReceiver();
-        mGetProjectsResultReceiver.setReceiver(this);
+        mCursorAdapter = new ProjectListCursorAdapter(getActivity());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_project_list, container, false);
-
-        mCursorAdapter = new ProjectListCursorAdapter(getActivity());
 
         StaggeredGridView staggeredGridView = (StaggeredGridView) view.findViewById(R.id.grid);
         staggeredGridView.setAdapter(mCursorAdapter);
@@ -68,7 +64,11 @@ public class ProjectListFragment extends Fragment implements GetProjectsResultRe
     public void onResume() {
         super.onResume();
 
-        getLoaderManager().initLoader(PROJECTS_LOADER, null, new ProjectListLoaderCallbacks());
+        getLoaderManager()
+                .initLoader(PROJECTS_LOADER, null, this);
+
+        mGetProjectsResultReceiver = new GetProjectsResultReceiver();
+        mGetProjectsResultReceiver.setReceiver(this);
 
         Intent service = new Intent(
                 Intent.ACTION_VIEW,
@@ -83,7 +83,34 @@ public class ProjectListFragment extends Fragment implements GetProjectsResultRe
     @Override
     public void onPause() {
         super.onPause();
+
         mGetProjectsResultReceiver.setReceiver(null);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(
+                getActivity(),
+                ZooniverseContract.Projects.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mCursorAdapter.changeCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mCursorAdapter.changeCursor(null);
+    }
+
+    public interface OnProjectSelectedListener {
+        void onProjectSelected(Uri projectUri, View view);
     }
 
     @Override
@@ -104,34 +131,6 @@ public class ProjectListFragment extends Fragment implements GetProjectsResultRe
                         .make(getView(), String.format(Locale.US, "Error fetching projects: %s", resultData.getInt(GetProjectsService.EXTRA_MESSAGE)), Snackbar.LENGTH_LONG)
                         .show();
                 break;
-        }
-    }
-
-    public interface OnProjectSelectedListener {
-        void onProjectSelected(Uri projectUri, View view);
-    }
-
-    public class ProjectListLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
-        @Override
-        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            return new CursorLoader(
-                    getActivity(),
-                    ZooniverseContract.Projects.CONTENT_URI,
-                    null,
-                    null,
-                    null,
-                    null
-            );
-        }
-
-        @Override
-        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-            mCursorAdapter.changeCursor(data);
-        }
-
-        @Override
-        public void onLoaderReset(Loader<Cursor> loader) {
-            mCursorAdapter.changeCursor(null);
         }
     }
 }

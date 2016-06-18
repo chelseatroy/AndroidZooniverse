@@ -12,14 +12,17 @@ import com.chelseatroy.androidzooniverse.R;
 import com.chelseatroy.androidzooniverse.provider.ZooniverseContract;
 
 public class ProjectListCursorAdapter extends CursorAdapter {
+
+    private LayoutInflater mInflater;
+
     public ProjectListCursorAdapter(Context context) {
         super(context, null, 0);
+        mInflater = LayoutInflater.from(context);
     }
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.project_list_item, parent, false);
+        View view = mInflater.inflate(R.layout.project_list_item, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         view.setTag(viewHolder);
         return view;
