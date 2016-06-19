@@ -33,6 +33,7 @@ public class ProjectListActivity extends AppCompatActivity implements ProjectLis
 
     @Override
     @TargetApi(15)
+    @SuppressWarnings("unchecked")
     public void onProjectSelected(Uri projectUri, View view) {
         Intent intent = new Intent(
                 Intent.ACTION_VIEW,

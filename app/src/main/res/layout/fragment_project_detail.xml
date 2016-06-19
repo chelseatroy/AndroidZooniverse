@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/title_text"
@@ -10,23 +10,23 @@
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:textSize="28sp"
-        android:transitionName="titleToDetail"/>
+        android:transitionName="titleToDetail" />
 
     <TextView
         android:id="@+id/description_text"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:padding="8dp"
         android:textSize="16sp"
-        android:layout_height="wrap_content"
-        android:transitionName="descriptionToDetail"/>
+        android:transitionName="descriptionToDetail" />
 
     <TextView
         android:id="@+id/go_to_project_button"
         android:layout_width="match_parent"
-        android:text="GO TO PROJECT"
+        android:layout_height="wrap_content"
         android:background="@color/colorAccent"
         android:padding="8dp"
+        android:text="GO TO PROJECT"
         android:textSize="16sp"
-        android:layout_height="wrap_content"
-        />
+        android:theme="@style/ThemeOverlay.AppCompat.Dark" />
 </LinearLayout>

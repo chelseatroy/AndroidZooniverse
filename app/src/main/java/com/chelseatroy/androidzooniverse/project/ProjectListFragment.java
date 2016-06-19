@@ -27,6 +27,7 @@ import java.util.Locale;
 public class ProjectListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, GetProjectsResultReceiver.Receiver {
     public static final String EXTRA_RECEIVER = "receiver";
     private static final int PROJECTS_LOADER = 0;
+
     private GetProjectsResultReceiver mGetProjectsResultReceiver;
     private OnProjectSelectedListener mOnProjectSelectedListener;
     private CursorAdapter mCursorAdapter;
