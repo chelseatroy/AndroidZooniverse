@@ -51,6 +51,8 @@ public class GetProjectsService extends IntentService {
                 values.put(ZooniverseContract.Projects._ID, project.id);
                 values.put(ZooniverseContract.Projects.TITLE, project.title);
                 values.put(ZooniverseContract.Projects.DESCRIPTION, project.description);
+                values.put(ZooniverseContract.Projects.SLUG, project.slug);
+                values.put(ZooniverseContract.Projects.REDIRECT, project.redirect);
                 getContentResolver().insert(ZooniverseContract.Projects.CONTENT_URI, values);
             }
             Bundle resultData = new Bundle();
@@ -92,5 +94,7 @@ public class GetProjectsService extends IntentService {
         public int id;
         public String title;
         public String description;
+        public String slug;
+        public String redirect;
     }
 }

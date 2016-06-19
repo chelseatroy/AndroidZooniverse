@@ -11,7 +11,7 @@ public class ZooniverseSQLiteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE projects (_id INTEGER PRIMARY KEY, title TEXT, description TEXT)");
+        db.execSQL("CREATE TABLE projects (_id INTEGER PRIMARY KEY, title TEXT, description TEXT, slug TEXT, redirect TEXT)");
     }
 
     @Override

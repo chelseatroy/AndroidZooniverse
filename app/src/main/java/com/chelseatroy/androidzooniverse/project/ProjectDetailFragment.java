@@ -1,5 +1,6 @@
 package com.chelseatroy.androidzooniverse.project;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -64,7 +65,7 @@ public class ProjectDetailFragment extends Fragment implements LoaderManager.Loa
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    public void onLoadFinished(Loader<Cursor> loader, final Cursor data) {
         data.moveToFirst();
 
         View view = getView();
@@ -73,6 +74,20 @@ public class ProjectDetailFragment extends Fragment implements LoaderManager.Loa
 
         TextView textView = (TextView) view.findViewById(R.id.description_text);
         textView.setText(data.getString(data.getColumnIndex(ZooniverseContract.Projects.DESCRIPTION)));
+
+        View goToProjectButton = getView().findViewById(R.id.go_to_project_button);
+        goToProjectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String uriString = data.getString(data.getColumnIndex(ZooniverseContract.Projects.REDIRECT));
+                if (uriString == null || uriString.isEmpty()) {
+                    uriString = "https://www.zooniverse.org/projects/" + data.getString(data.getColumnIndex(ZooniverseContract.Projects.SLUG));
+                }
+
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uriString));
+                startActivity(intent);
+            }
+        });
     }
 
     @Override

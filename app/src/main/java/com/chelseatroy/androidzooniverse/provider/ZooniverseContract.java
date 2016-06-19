@@ -12,5 +12,7 @@ public class ZooniverseContract {
         public static final String TABLE = "projects";
         public static final String TITLE = "title";
         public static final String DESCRIPTION = "description";
+        public static final String SLUG = "slug";
+        public static final String REDIRECT = "redirect";
     }
 }
