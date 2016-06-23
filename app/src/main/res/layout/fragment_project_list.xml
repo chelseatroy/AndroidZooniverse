@@ -4,7 +4,6 @@
     android:id="@+id/grid"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/cardview_dark_background"
     android:columnWidth="160dp"
     android:gravity="center"
     android:horizontalSpacing="15dp"
