@@ -2,6 +2,7 @@ package com.chelseatroy.androidzooniverse.project;
 
 import android.app.IntentService;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.os.ResultReceiver;
@@ -26,6 +27,7 @@ public class GetProjectsService extends IntentService {
     public static final int RESULT_CODE_INTERRUPTED_ERROR = 1;
     public static final int RESULT_CODE_SERVER_ERROR = 2;
 
+    private static final String EXTRA_RECEIVER = "receiver";
     public static final String EXTRA_COUNT = "count";
     public static final String EXTRA_STATUS_CODE = "statusCode";
     public static final String EXTRA_MESSAGE = "message";
@@ -42,7 +44,7 @@ public class GetProjectsService extends IntentService {
         StringRequest request = new GetProjectsRequest(future);
         requestQueue.add(request);
 
-        ResultReceiver receiver = intent.getParcelableExtra(ProjectListFragment.EXTRA_RECEIVER);
+        ResultReceiver receiver = intent.getParcelableExtra(EXTRA_RECEIVER);
         try {
             String response = future.get();
             GetProjects getProjects = new Gson().fromJson(response, GetProjects.class);
@@ -71,6 +73,12 @@ public class GetProjectsService extends IntentService {
 
             receiver.send(RESULT_CODE_SERVER_ERROR, resultData);
         }
+    }
+
+    public static Intent newIntent(Context context, ResultReceiver resultReceiver) {
+        Intent intent = new Intent(context, GetProjectsService.class);
+        intent.putExtra(EXTRA_RECEIVER, resultReceiver);
+        return intent;
     }
 
     public static class GetProjectsRequest extends StringRequest {

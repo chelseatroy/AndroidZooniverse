@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">AndroidZooniverse</string>
+    <string name="ok_snackbar">Got %d projects</string>
+    <string name="error_snackbar">Error fetching projects: %d</string>
 </resources>

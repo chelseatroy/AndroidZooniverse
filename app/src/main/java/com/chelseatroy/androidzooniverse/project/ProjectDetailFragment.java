@@ -19,9 +19,7 @@ import com.chelseatroy.androidzooniverse.provider.ZooniverseContract;
 
 public class ProjectDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String ARG_PROJECT_URI = "projectUri";
-    private static final int PROJECT_LOADER = 0;
-
-    private Uri mProjectUri;
+    private static final int PROJECT_LOADER_ID = 0;
 
     public static Fragment newInstance(Uri projectUri) {
         Bundle args = new Bundle();
@@ -32,12 +30,6 @@ public class ProjectDetailFragment extends Fragment implements LoaderManager.Loa
         return fragment;
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mProjectUri = getArguments().getParcelable(ARG_PROJECT_URI);
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -45,53 +37,70 @@ public class ProjectDetailFragment extends Fragment implements LoaderManager.Loa
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         getLoaderManager()
-                .initLoader(PROJECT_LOADER, null, this);
+                .initLoader(PROJECT_LOADER_ID, getArguments(), this);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(
-                getActivity(),
-                mProjectUri,
-                null,
-                null,
-                null,
-                null
-        );
+        switch (id) {
+            case PROJECT_LOADER_ID:
+                return new CursorLoader(
+                        getActivity(),
+                        ((Uri) getArguments().getParcelable(ARG_PROJECT_URI)),
+                        null,
+                        null,
+                        null,
+                        null
+                );
+            default:
+                throw new IllegalArgumentException("Unknown loader id: " + id);
+        }
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, final Cursor data) {
-        data.moveToFirst();
+        switch (loader.getId()) {
+            case PROJECT_LOADER_ID:
+                data.moveToFirst();
 
-        View view = getView();
-        TextView titleTextView = (TextView) view.findViewById(R.id.title_text);
-        titleTextView.setText(data.getString(data.getColumnIndex(ZooniverseContract.Projects.TITLE)));
+                View view = getView();
+                TextView titleTextView = (TextView) view.findViewById(R.id.title_text);
+                titleTextView.setText(data.getString(data.getColumnIndex(ZooniverseContract.Projects.TITLE)));
 
-        TextView textView = (TextView) view.findViewById(R.id.description_text);
-        textView.setText(data.getString(data.getColumnIndex(ZooniverseContract.Projects.DESCRIPTION)));
+                TextView textView = (TextView) view.findViewById(R.id.description_text);
+                textView.setText(data.getString(data.getColumnIndex(ZooniverseContract.Projects.DESCRIPTION)));
 
-        View goToProjectButton = getView().findViewById(R.id.go_to_project_button);
-        goToProjectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String uriString = data.getString(data.getColumnIndex(ZooniverseContract.Projects.REDIRECT));
-                if (uriString == null || uriString.isEmpty()) {
-                    uriString = "https://www.zooniverse.org/projects/" + data.getString(data.getColumnIndex(ZooniverseContract.Projects.SLUG));
-                }
+                View goToProjectButton = getView().findViewById(R.id.go_to_project_button);
+                goToProjectButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String uriString = data.getString(data.getColumnIndex(ZooniverseContract.Projects.REDIRECT));
+                        if (uriString == null || uriString.isEmpty()) {
+                            uriString = "https://www.zooniverse.org/projects/" + data.getString(data.getColumnIndex(ZooniverseContract.Projects.SLUG));
+                        }
 
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uriString));
-                startActivity(intent);
-            }
-        });
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uriString));
+                        startActivity(intent);
+                    }
+                });
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown loader id: " + loader.getId());
+        }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        // noop
+        switch (loader.getId()) {
+            case PROJECT_LOADER_ID:
+                // noop
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown loader id: " + loader.getId());
+        }
     }
 }
