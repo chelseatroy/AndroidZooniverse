@@ -12,7 +12,6 @@ import com.chelseatroy.androidzooniverse.R;
 import com.chelseatroy.androidzooniverse.provider.ZooniverseContract;
 
 public class ProjectListCursorAdapter extends CursorAdapter {
-
     private LayoutInflater mInflater;
 
     public ProjectListCursorAdapter(Context context) {

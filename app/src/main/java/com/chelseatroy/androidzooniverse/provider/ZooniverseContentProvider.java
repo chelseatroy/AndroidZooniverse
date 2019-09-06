@@ -3,6 +3,7 @@ package com.chelseatroy.androidzooniverse.provider;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -21,11 +22,13 @@ public class ZooniverseContentProvider extends ContentProvider {
         sUriMatcher.addURI(ZooniverseContract.AUTHORITY, ZooniverseContract.Projects.TABLE + "/#", PROJECT_ID);
     }
 
+    private Context mContext;
     private SQLiteOpenHelper mSQLiteOpenHelper;
 
     @Override
     public boolean onCreate() {
-        mSQLiteOpenHelper = new ZooniverseSQLiteOpenHelper(getContext());
+        mContext = getContext();
+        mSQLiteOpenHelper = new ZooniverseSQLiteOpenHelper(mContext);
         return true;
     }
 
@@ -48,7 +51,7 @@ public class ZooniverseContentProvider extends ContentProvider {
             case PROJECT_ID:
                 SQLiteQueryBuilder sqLiteQueryBuilder = new SQLiteQueryBuilder();
                 sqLiteQueryBuilder.setTables(ZooniverseContract.Projects.TABLE);
-                sqLiteQueryBuilder.appendWhere("_id = " + uri.getLastPathSegment());
+                sqLiteQueryBuilder.appendWhere(ZooniverseContract.Projects._ID + " = " + uri.getLastPathSegment());
                 cursor = sqLiteQueryBuilder
                         .query(mSQLiteOpenHelper.getReadableDatabase(),
                                 projection,
@@ -61,7 +64,7 @@ public class ZooniverseContentProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Unknown uri: " + uri);
         }
-        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        cursor.setNotificationUri(mContext.getContentResolver(), uri);
         return cursor;
     }
 
@@ -83,8 +86,8 @@ public class ZooniverseContentProvider extends ContentProvider {
                                 null,
                                 values,
                                 SQLiteDatabase.CONFLICT_REPLACE);
-                newUri = ContentUris.withAppendedId(ZooniverseContract.Projects.CONTENT_URI, id);
-                getContext().getContentResolver().notifyChange(newUri, null);
+                newUri = ContentUris.withAppendedId(uri, id);
+                mContext.getContentResolver().notifyChange(newUri, null);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown uri: " + uri);

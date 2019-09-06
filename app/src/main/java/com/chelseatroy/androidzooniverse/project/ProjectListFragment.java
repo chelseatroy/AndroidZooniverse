@@ -25,12 +25,15 @@ import com.etsy.android.grid.StaggeredGridView;
 import java.util.Locale;
 
 public class ProjectListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, GetProjectsResultReceiver.Receiver {
-    public static final String EXTRA_RECEIVER = "receiver";
-    private static final int PROJECTS_LOADER = 0;
+    private static final int PROJECTS_LOADER_ID = 0;
 
-    private GetProjectsResultReceiver mGetProjectsResultReceiver;
-    private OnProjectSelectedListener mOnProjectSelectedListener;
     private CursorAdapter mCursorAdapter;
+    private OnProjectSelectedListener mOnProjectSelectedListener;
+    private GetProjectsResultReceiver mGetProjectsResultReceiver;
+
+    public interface OnProjectSelectedListener {
+        void onProjectSelected(Uri projectUri, View view);
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -62,22 +65,16 @@ public class ProjectListFragment extends Fragment implements LoaderManager.Loade
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         getLoaderManager()
-                .initLoader(PROJECTS_LOADER, null, this);
+                .initLoader(PROJECTS_LOADER_ID, getArguments(), this);
 
         mGetProjectsResultReceiver = new GetProjectsResultReceiver();
         mGetProjectsResultReceiver.setReceiver(this);
 
-        Intent service = new Intent(
-                Intent.ACTION_VIEW,
-                ZooniverseContract.Projects.CONTENT_URI,
-                getActivity(),
-                GetProjectsService.class
-        );
-        service.putExtra(EXTRA_RECEIVER, mGetProjectsResultReceiver);
+        Intent service = GetProjectsService.newIntent(getActivity(), mGetProjectsResultReceiver);
         getActivity().startService(service);
     }
 
@@ -90,28 +87,41 @@ public class ProjectListFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(
-                getActivity(),
-                ZooniverseContract.Projects.CONTENT_URI,
-                null,
-                null,
-                null,
-                null
-        );
+        switch (id) {
+            case PROJECTS_LOADER_ID:
+                return new CursorLoader(
+                        getActivity(),
+                        ZooniverseContract.Projects.CONTENT_URI,
+                        null,
+                        null,
+                        null,
+                        null
+                );
+            default:
+                throw new IllegalArgumentException("Unknown loader id: " + id);
+        }
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mCursorAdapter.changeCursor(data);
+        switch (loader.getId()) {
+            case PROJECTS_LOADER_ID:
+                mCursorAdapter.changeCursor(data);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown loader id: " + loader.getId());
+        }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        mCursorAdapter.changeCursor(null);
-    }
-
-    public interface OnProjectSelectedListener {
-        void onProjectSelected(Uri projectUri, View view);
+        switch (loader.getId()) {
+            case PROJECTS_LOADER_ID:
+                mCursorAdapter.changeCursor(null);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown loader id: " + loader.getId());
+        }
     }
 
     @Override
@@ -119,17 +129,17 @@ public class ProjectListFragment extends Fragment implements LoaderManager.Loade
         switch (resultCode) {
             case GetProjectsService.RESULT_CODE_OK:
                 Snackbar
-                        .make(getView(), String.format(Locale.US, "Got %d projects", resultData.getInt(GetProjectsService.EXTRA_COUNT)), Snackbar.LENGTH_LONG)
+                        .make(getView(), String.format(Locale.US, getString(R.string.ok_snackbar), resultData.getInt(GetProjectsService.EXTRA_COUNT)), Snackbar.LENGTH_LONG)
                         .show();
                 break;
             case GetProjectsService.RESULT_CODE_SERVER_ERROR:
                 Snackbar
-                        .make(getView(), String.format(Locale.US, "Error fetching projects: %d", resultData.getInt(GetProjectsService.EXTRA_STATUS_CODE)), Snackbar.LENGTH_LONG)
+                        .make(getView(), String.format(Locale.US, getString(R.string.error_snackbar), resultData.getInt(GetProjectsService.EXTRA_STATUS_CODE)), Snackbar.LENGTH_LONG)
                         .show();
                 break;
             case GetProjectsService.RESULT_CODE_INTERRUPTED_ERROR:
                 Snackbar
-                        .make(getView(), String.format(Locale.US, "Error fetching projects: %s", resultData.getInt(GetProjectsService.EXTRA_MESSAGE)), Snackbar.LENGTH_LONG)
+                        .make(getView(), String.format(Locale.US, getString(R.string.error_snackbar), resultData.getInt(GetProjectsService.EXTRA_MESSAGE)), Snackbar.LENGTH_LONG)
                         .show();
                 break;
         }
